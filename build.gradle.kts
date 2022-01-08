@@ -27,6 +27,10 @@ dependencies {
     // logs
     implementation("ch.qos.logback:logback-classic:${Versions.logback}")
 
+    // DI (KoDeIn)
+    implementation("org.kodein.di:kodein-di:${Versions.kodein}")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:${Versions.kodein}")
+
     // tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
     testImplementation("io.ktor:ktor-server-tests:${Versions.ktor}")
