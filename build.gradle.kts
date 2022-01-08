@@ -1,6 +1,4 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
+import ru.vstu.Versions
 
 plugins {
     application
@@ -19,12 +17,17 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core:$ktor_version")
-    implementation("io.ktor:ktor-locations:$ktor_version")
-    implementation("io.ktor:ktor-server-host-common:$ktor_version")
-    implementation("io.ktor:ktor-serialization:$ktor_version")
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    // ktor
+    implementation("io.ktor:ktor-server-core:${Versions.ktor}")
+    implementation("io.ktor:ktor-locations:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-host-common:${Versions.ktor}")
+    implementation("io.ktor:ktor-serialization:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
+
+    // logs
+    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
+
+    // tests
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
+    testImplementation("io.ktor:ktor-server-tests:${Versions.ktor}")
 }
