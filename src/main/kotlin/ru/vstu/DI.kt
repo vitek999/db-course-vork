@@ -4,6 +4,7 @@ import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
+import ru.vstu.repositories.HotelRepository
 import ru.vstu.repositories.UserRepository
 import ru.vstu.routes.HealthRoutesInstaller
 import ru.vstu.routes.UserRoutesInstaller
@@ -16,6 +17,7 @@ fun DI.MainBuilder.registerAppBeans() {
 
     // repositories
     bindSingleton { UserRepository(database) }
+    bindSingleton { HotelRepository(database) }
 
     // routes
     bindSingleton { HealthRoutesInstaller() }
