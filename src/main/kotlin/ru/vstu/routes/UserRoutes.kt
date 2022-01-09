@@ -21,7 +21,7 @@ class UserRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
             getAllUsers()
             getUserByPhone()
             createUser()
-            deleteUserById()
+            deleteUserByPhone()
         }
     }
 
@@ -58,7 +58,7 @@ private fun Route.createUser() = post<UsersLocation> {
     call.respond(HttpStatusCode.Created)
 }
 
-private fun Route.deleteUserById() = delete<UsersLocation.Phone> { location ->
+private fun Route.deleteUserByPhone() = delete<UsersLocation.Phone> { location ->
     val usersRepository: UserRepository by closestDI().instance()
 
     usersRepository.deleteByPhone(location.phone)

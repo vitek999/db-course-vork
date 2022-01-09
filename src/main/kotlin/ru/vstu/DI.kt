@@ -7,6 +7,7 @@ import org.litote.kmongo.reactivestreams.KMongo
 import ru.vstu.repositories.HotelRepository
 import ru.vstu.repositories.UserRepository
 import ru.vstu.routes.HealthRoutesInstaller
+import ru.vstu.routes.HotelRoutesInstaller
 import ru.vstu.routes.UserRoutesInstaller
 
 fun DI.MainBuilder.registerAppBeans() {
@@ -22,4 +23,5 @@ fun DI.MainBuilder.registerAppBeans() {
     // routes
     bindSingleton { HealthRoutesInstaller() }
     bindSingleton { UserRoutesInstaller() }
+    bindSingleton { HotelRoutesInstaller() }
 }
