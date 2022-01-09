@@ -31,6 +31,9 @@ dependencies {
     implementation("org.kodein.di:kodein-di:${Versions.kodein}")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:${Versions.kodein}")
 
+    // DB (KMongo)
+    implementation("org.litote.kmongo:kmongo-coroutine-serialization:${Versions.kMongo}")
+
     // tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
     testImplementation("io.ktor:ktor-server-tests:${Versions.ktor}")
