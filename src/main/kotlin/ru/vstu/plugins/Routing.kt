@@ -1,3 +1,5 @@
+@file:OptIn(KtorExperimentalLocationsAPI::class)
+
 package ru.vstu.plugins
 
 import io.ktor.routing.*
@@ -6,7 +8,9 @@ import io.ktor.locations.*
 import io.ktor.features.*
 import io.ktor.application.*
 import io.ktor.response.*
-import io.ktor.request.*
+import org.kodein.di.allInstances
+import org.kodein.di.ktor.closestDI
+import ru.vstu.routes.StatusPagesConfigurationsInstaller
 
 fun Application.configureRouting() {
     install(Locations) {
@@ -28,6 +32,10 @@ fun Application.configureRouting() {
             call.respondText("Inside $it")
         }
         install(StatusPages) {
+            val statusPagesInstallers by closestDI().allInstances<StatusPagesConfigurationsInstaller>()
+
+            statusPagesInstallers.forEach { it.configureStatusPages(this) }
+
             exception<AuthenticationException> { cause ->
                 call.respond(HttpStatusCode.Unauthorized)
             }

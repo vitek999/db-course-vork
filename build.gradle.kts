@@ -33,6 +33,7 @@ dependencies {
 
     // DB (KMongo)
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:${Versions.kMongo}")
+    implementation("org.litote.kmongo:kmongo-id-serialization:${Versions.kMongo}")
 
     // tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
