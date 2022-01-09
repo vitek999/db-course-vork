@@ -11,6 +11,7 @@ import ru.vstu.routes.RoutesInstaller
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         di { registerAppBeans() }
+        configureCORS()
         configureRouting()
         configureSerialization()
 
