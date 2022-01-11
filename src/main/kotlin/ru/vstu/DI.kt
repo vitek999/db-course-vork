@@ -2,6 +2,7 @@ package ru.vstu
 
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
+import org.kodein.di.instance
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 import ru.vstu.repositories.HotelRepository
@@ -9,6 +10,7 @@ import ru.vstu.repositories.RoomRepository
 import ru.vstu.repositories.RoomTypeRepository
 import ru.vstu.repositories.UserRepository
 import ru.vstu.routes.*
+import ru.vstu.services.RoomService
 
 fun DI.MainBuilder.registerAppBeans() {
 
@@ -21,6 +23,9 @@ fun DI.MainBuilder.registerAppBeans() {
     bindSingleton { HotelRepository(database) }
     bindSingleton { RoomTypeRepository(database) }
     bindSingleton { RoomRepository(database) }
+
+    // services
+    bindSingleton { RoomService(instance(), instance()) }
 
     // routes
     bindSingleton { HealthRoutesInstaller() }

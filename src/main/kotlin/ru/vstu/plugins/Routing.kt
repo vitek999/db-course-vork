@@ -42,7 +42,9 @@ fun Application.configureRouting() {
             exception<AuthorizationException> { cause ->
                 call.respond(HttpStatusCode.Forbidden)
             }
-
+            exception<IllegalArgumentException> { cause ->
+                call.respondText(cause.message ?: "", status = HttpStatusCode.BadRequest)
+            }
         }
     }
 }
