@@ -25,7 +25,7 @@ fun DI.MainBuilder.registerAppBeans() {
     bindSingleton { RoomRepository(database) }
 
     // services
-    bindSingleton { RoomService(instance(), instance()) }
+    bindSingleton { RoomService(instance(), instance(), instance()) }
 
     // routes
     bindSingleton { HealthRoutesInstaller() }

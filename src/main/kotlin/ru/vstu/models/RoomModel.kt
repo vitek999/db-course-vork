@@ -11,5 +11,6 @@ data class RoomModel(
     val number: String,
     val sleepingPlaces: Int,
     val cost: Int,
-    @Contextual val type: Id<RoomTypeModel>? = null
+    @Contextual val type: Id<RoomTypeModel>? = null,
+    @Contextual val hotel: Id<HotelModel>? = null,
 )
