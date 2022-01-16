@@ -10,5 +10,9 @@ class UserRepository(database: CoroutineDatabase) : CRUDRepository<UserModel>(da
         collection.deleteOne(UserModel::phone eq phone)
     }
 
+    suspend fun updateByPhone(phone: String, model: UserModel) {
+        collection.updateOne(UserModel::phone eq phone, model)
+    }
+
     suspend fun existsByPhone(phone: String): Boolean = findByPhoneOrNull(phone) != null
 }

@@ -25,6 +25,7 @@ class UserRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
             getAllUsers()
             getUserByPhone()
             createUser()
+            updateUserByPhone()
             deleteUserByPhone()
         }
     }
@@ -75,6 +76,14 @@ private fun Route.getUserByPhone() = get<UsersLocation.Phone> { location ->
 
     val user = usersRepository.findByPhoneOrNull(location.phone) ?: throw UserNotFoundException(location.phone)
     call.respond(user)
+}
+
+private fun Route.updateUserByPhone() = post<UsersLocation.Phone> { location ->
+    val usersRepository: UserRepository by closestDI().instance()
+
+    val user = call.receiveOrNull<UserModel>() ?: throw WrongUserReceivedException()
+    usersRepository.updateByPhone(location.phone, user)
+    call.respond(HttpStatusCode.OK)
 }
 
 class WrongUserReceivedException: RuntimeException("Wrong user received.")
