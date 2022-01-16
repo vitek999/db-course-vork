@@ -11,4 +11,6 @@ abstract class CRUDRepository<T : Any>(protected val collection: CoroutineCollec
     suspend fun findById(id: String): T? = collection.findOneById(ObjectId(id))
 
     suspend fun deleteById(id: String): T? = collection.findOneAndDelete(KMongoUtil.idFilterQuery(ObjectId(id)))
+
+    suspend fun existsById(id: String): Boolean = findById(id) != null
 }

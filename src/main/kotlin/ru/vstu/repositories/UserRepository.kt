@@ -9,4 +9,6 @@ class UserRepository(database: CoroutineDatabase) : CRUDRepository<UserModel>(da
     suspend fun deleteByPhone(phone: String) {
         collection.deleteOne(UserModel::phone eq phone)
     }
+
+    suspend fun existsByPhone(phone: String): Boolean = findByPhoneOrNull(phone) != null
 }

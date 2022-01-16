@@ -12,8 +12,12 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
+import org.litote.kmongo.MongoOperator
+import ru.vstu.extensions.respondBadRequest
 import ru.vstu.models.UserModel
 import ru.vstu.repositories.UserRepository
+import ru.vstu.services.UserService
+import ru.vstu.services.UserWithPhoneAlreadyExistsException
 
 class UserRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller {
     override fun install(application: Application) {
@@ -33,6 +37,7 @@ class UserRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
             exception<UserNotFoundException> { cause ->
                 call.respondText(cause.message ?: "", status = HttpStatusCode.NotFound)
             }
+            exception<UserWithPhoneAlreadyExistsException> { cause -> call.respondBadRequest(cause) }
         }
     }
 }
@@ -51,10 +56,10 @@ private fun Route.getAllUsers() = get<UsersLocation> {
 }
 
 private fun Route.createUser() = post<UsersLocation> {
-    val usersRepository: UserRepository by closestDI().instance()
+    val userService: UserService by closestDI().instance()
 
     val user = call.receiveOrNull<UserModel>() ?: throw WrongUserReceivedException()
-    usersRepository.add(user)
+    userService.create(user)
     call.respond(HttpStatusCode.Created)
 }
 

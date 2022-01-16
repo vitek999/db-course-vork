@@ -22,6 +22,7 @@ class RoomRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
         application.routing {
             getAllRooms()
             getRoomById()
+            getRoomsByHotelAndType()
             addRoom()
         }
     }
@@ -39,7 +40,9 @@ class RoomRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
 
 @Location("/rooms")
 class RoomLocation {
-    @Location("/{id}")
+    @Location("/filter")
+    data class Filter(val parent: RoomLocation, val hotelId: String? = null, val typeId: String? = null)
+    @Location("/id/{id}")
     data class Id(val parent: RoomLocation, val id: String)
 }
 
@@ -53,8 +56,15 @@ private fun Route.getAllRooms() = get<RoomLocation> {
 private fun Route.getRoomById() = get<RoomLocation.Id> { location ->
     val roomService: RoomService by closestDI().instance()
 
-    val room = roomService.getRoomById(location.id) ?: throw RoomNotFoundException(location.id)
+    val room = roomService.getRoomById(location.id)
     call.respond(room)
+}
+
+
+private fun Route.getRoomsByHotelAndType() = get<RoomLocation.Filter> { location ->
+    val roomService: RoomService by closestDI().instance()
+    val rooms = roomService.getRoomsByHotelIdAndTypeId(location.hotelId, location.typeId)
+    call.respond(rooms)
 }
 
 private fun Route.addRoom() = post<RoomLocation> {

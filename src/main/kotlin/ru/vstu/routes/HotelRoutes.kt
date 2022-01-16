@@ -12,8 +12,11 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
+import ru.vstu.extensions.respondBadRequest
 import ru.vstu.models.HotelModel
 import ru.vstu.repositories.HotelRepository
+import ru.vstu.services.HotelService
+import ru.vstu.services.HotelWithNameAlreadyExists
 
 class HotelRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller {
     override fun install(application: Application) {
@@ -33,6 +36,7 @@ class HotelRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller
             exception<HotelNotFoundException> { cause ->
                 call.respondText(cause.message ?: "", status = HttpStatusCode.NotFound)
             }
+            exception<HotelWithNameAlreadyExists> { cause -> call.respondBadRequest(cause) }
         }
     }
 }
@@ -50,10 +54,10 @@ private fun Route.getAll() = get<HotelLocation> {
 }
 
 private fun Route.addHotel() = post<HotelLocation> {
-    val hotelsRepository: HotelRepository by closestDI().instance()
+    val hotelService: HotelService by closestDI().instance()
 
     val hotel = call.receiveOrNull<HotelModel>() ?: throw WrongHotelReceivedException()
-    hotelsRepository.add(hotel)
+    hotelService.create(hotel)
     call.respond(HttpStatusCode.Created)
 }
 

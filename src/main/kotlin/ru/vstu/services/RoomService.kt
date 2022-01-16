@@ -16,12 +16,18 @@ class RoomService(
 ) {
     suspend fun getAllRooms(): List<RoomDto> = roomRepository.findAll().map { it.toDto() }
 
-    suspend fun getRoomById(id: String): RoomDto? = roomRepository.findById(id)?.toDto()
+    suspend fun getRoomById(id: String): RoomDto = roomRepository.findById(id)?.toDto() ?: throw RoomNotFoundException(id)
 
     suspend fun createRoom(dto: CreateRoomDto) {
         val isExists = roomRepository.existsByNumberAndHotel(dto.number, dto.hotel)
         if (isExists) throw RoomWithNumberAndHotelAlreadyExists(dto.number, dto.hotel)
         roomRepository.add(dto.toModel())
+    }
+
+    suspend fun getRoomsByHotelIdAndTypeId(hotelId: String?, typeId: String?): List<RoomDto> {
+        if (hotelId != null && !hotelRepository.existsById(hotelId)) throw HotelNotFoundException(hotelId)
+        if (typeId != null && !roomTypeRepository.existsById(typeId)) throw RoomTypeNotFoundException(typeId)
+        return roomRepository.findAllByHotelIdAndTypeId(hotelId, typeId).map { it.toDto() }
     }
 
     private suspend fun RoomModel.toDto(): RoomDto {

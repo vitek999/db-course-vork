@@ -12,9 +12,12 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
+import ru.vstu.extensions.respondBadRequest
 import ru.vstu.models.RoomTypeModel
 import ru.vstu.repositories.RoomTypeRepository
 import ru.vstu.services.RoomTypeNotFoundException
+import ru.vstu.services.RoomTypeService
+import ru.vstu.services.RoomTypeWithNameAlreadyExistsException
 
 class RoomTypeRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller {
     override fun install(application: Application) {
@@ -33,6 +36,7 @@ class RoomTypeRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstal
             exception<RoomTypeNotFoundException> { cause ->
                 call.respondText(cause.message ?: "", status = HttpStatusCode.NotFound)
             }
+            exception<RoomTypeWithNameAlreadyExistsException> { cause -> call.respondBadRequest(cause) }
         }
     }
 }
@@ -51,10 +55,10 @@ private fun Route.getAll() = get<RoomTypeLocation> {
 }
 
 private fun Route.addRoom() = post<RoomTypeLocation> {
-    val roomTypeRepository: RoomTypeRepository by closestDI().instance()
+    val roomTypeService: RoomTypeService by closestDI().instance()
 
     val roomType = call.receiveOrNull<RoomTypeModel>() ?: throw WrongRoomTypeReceivedException()
-    roomTypeRepository.add(roomType)
+    roomTypeService.create(roomType)
     call.respond(HttpStatusCode.Created)
 }
 

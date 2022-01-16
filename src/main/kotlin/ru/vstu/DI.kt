@@ -5,12 +5,9 @@ import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
-import ru.vstu.repositories.HotelRepository
-import ru.vstu.repositories.RoomRepository
-import ru.vstu.repositories.RoomTypeRepository
-import ru.vstu.repositories.UserRepository
+import ru.vstu.repositories.*
 import ru.vstu.routes.*
-import ru.vstu.services.RoomService
+import ru.vstu.services.*
 
 fun DI.MainBuilder.registerAppBeans() {
 
@@ -23,9 +20,14 @@ fun DI.MainBuilder.registerAppBeans() {
     bindSingleton { HotelRepository(database) }
     bindSingleton { RoomTypeRepository(database) }
     bindSingleton { RoomRepository(database) }
+    bindSingleton { ScheduleRepository(database) }
 
     // services
     bindSingleton { RoomService(instance(), instance(), instance()) }
+    bindSingleton { HotelService(instance()) }
+    bindSingleton { RoomTypeService(instance()) }
+    bindSingleton { UserService(instance()) }
+    bindSingleton { ScheduleService(instance(), instance()) }
 
     // routes
     bindSingleton { HealthRoutesInstaller() }
@@ -33,4 +35,5 @@ fun DI.MainBuilder.registerAppBeans() {
     bindSingleton { HotelRoutesInstaller() }
     bindSingleton { RoomRoutesInstaller() }
     bindSingleton { RoomTypeRoutesInstaller() }
+    bindSingleton { ScheduleRoutesInstaller() }
 }
