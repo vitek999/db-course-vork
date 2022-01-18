@@ -12,6 +12,7 @@ import ru.vstu.repositories.UserRepository
 import ru.vstu.routes.HotelNotFoundException
 import ru.vstu.routes.UserNotFoundException
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class ScheduleService(
     private val scheduleRepository: ScheduleRepository,
@@ -56,6 +57,11 @@ class ScheduleService(
         }
     }
 
+    suspend fun deleteById( id: String) {
+        if(!scheduleRepository.existsById(id)) throw ScheduleNotFoundException(id)
+        scheduleRepository.deleteById(id)
+    }
+
     suspend fun getSchedulesByRoomId(roomId: String): List<FullScheduleDto> {
         if (roomService.isExists(roomId)) throw RoomNotFoundException(roomId)
         val schedules = scheduleRepository.findAllByRoomId(roomId)
@@ -80,11 +86,13 @@ class ScheduleService(
     private suspend fun ScheduleModel.asFullDto(): FullScheduleDto = FullScheduleDto(
         id = _id.toString(),
         users = users.map { usersRepository.findById(it.toString()) ?: throw UserNotFoundException(it.toString()) },
-        startDate = startDate.toEpochDay(),
-        endDate = endDate.toEpochDay(),
+        startDate = startDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
+        endDate = endDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
         roomModel = roomRepository.findById(room.toString()) ?: throw RoomNotFoundException(room.toString())
     )
 }
 
+
+class ScheduleNotFoundException(scheduleId: String): RuntimeException("Schedule with id: $scheduleId not found.")
 class CountOfSleepingPlaceNotEnoughInRoomException(roomId: String): RuntimeException("Count of sleeping places not enough in room with id: $roomId.")
 class EndDateOfBookBeforeStartDateException(startDate: LocalDate, endDate: LocalDate): RuntimeException("End date of book: $endDate before start date: $startDate.")

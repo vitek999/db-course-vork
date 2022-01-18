@@ -8,7 +8,7 @@ import ru.vstu.models.UserModel
 data class FullScheduleDto(
     val id: String? = null,
     val users: List<UserModel>,
-    val startDate: Long,
-    val endDate: Long,
+    val startDate: String,
+    val endDate: String,
     val roomModel: RoomModel,
 )

@@ -14,9 +14,10 @@ import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 import ru.vstu.dtos.ScheduleDto
 import ru.vstu.extensions.respondBadRequest
-import ru.vstu.models.ScheduleModel
+import ru.vstu.extensions.respondNotFound
 import ru.vstu.services.CountOfSleepingPlaceNotEnoughInRoomException
 import ru.vstu.services.EndDateOfBookBeforeStartDateException
+import ru.vstu.services.ScheduleNotFoundException
 import ru.vstu.services.ScheduleService
 import java.time.LocalDate
 
@@ -27,6 +28,7 @@ class ScheduleRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstal
             bookRoom()
             getAllSchedule()
             getAllScheduleByHotelId()
+            deleteById()
         }
     }
 
@@ -34,7 +36,8 @@ class ScheduleRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstal
         configuration.apply {
             exception<WrongScheduleEntityWasReceivedException> { cause -> call.respondBadRequest(cause) }
             exception<CountOfSleepingPlaceNotEnoughInRoomException> { cause -> call.respondBadRequest(cause) }
-            exception<EndDateOfBookBeforeStartDateException>() { cause -> call.respondBadRequest(cause)}
+            exception<EndDateOfBookBeforeStartDateException> { cause -> call.respondBadRequest(cause)}
+            exception<ScheduleNotFoundException> { cause -> call.respondNotFound(cause) }
         }
     }
 }
@@ -55,8 +58,12 @@ class ScheduleLocation {
 
     @Location("/history/{hotelId}")
     data class History(
+        val parent: ScheduleLocation,
         val hotelId: String
     )
+
+    @Location("/id/{id}")
+    data class Id(val parent: ScheduleLocation, val id: String)
 }
 
 private fun Route.bookRoom() = post<ScheduleLocation.Book> {
@@ -88,6 +95,13 @@ private fun Route.getAllScheduleByHotelId() = get<ScheduleLocation.History> { lo
 
     val schedules = scheduleService.getSchedulesByHotelId(location.hotelId)
     call.respond(schedules)
+}
+
+private fun Route.deleteById() = delete<ScheduleLocation.Id> { location ->
+    val scheduleService: ScheduleService by closestDI().instance()
+
+    scheduleService.deleteById(location.id)
+    call.respond(HttpStatusCode.OK)
 }
 
 class WrongScheduleEntityWasReceivedException : RuntimeException("Wrong schedule entity was received")
