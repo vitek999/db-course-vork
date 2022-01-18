@@ -22,6 +22,7 @@ class RoomRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
         application.routing {
             getAllRooms()
             getRoomById()
+            deleteById()
             getRoomsByHotelAndType()
             addRoom()
         }
@@ -34,6 +35,7 @@ class RoomRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstaller 
             exception<RoomNotFoundException> { cause -> call.respondNotFound(cause) }
             exception<RoomHasIncorrectHotel> { cause -> call.respondBadRequest(cause) }
             exception<RoomWithNumberAndHotelAlreadyExists> { cause -> call.respondBadRequest(cause) }
+            exception<RoomUsedInSchedulesException> { cause -> call.respondBadRequest(cause) }
         }
     }
 }
@@ -73,6 +75,13 @@ private fun Route.addRoom() = post<RoomLocation> {
     val room = call.receiveOrNull<CreateRoomDto>() ?: throw WrongRoomReceivedException()
     roomService.createRoom(room)
     call.respond(HttpStatusCode.Created)
+}
+
+private fun Route.deleteById() = delete<RoomLocation.Id> {location ->
+    val roomService: RoomService by closestDI().instance()
+
+    roomService.deleteById(location.id)
+    call.respond(HttpStatusCode.OK)
 }
 
 class WrongRoomReceivedException: RuntimeException("Wrong room received.")

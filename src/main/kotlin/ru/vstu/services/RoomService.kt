@@ -7,12 +7,14 @@ import ru.vstu.models.RoomModel
 import ru.vstu.repositories.HotelRepository
 import ru.vstu.repositories.RoomRepository
 import ru.vstu.repositories.RoomTypeRepository
+import ru.vstu.repositories.ScheduleRepository
 import ru.vstu.routes.HotelNotFoundException
 
 class RoomService(
     private val roomRepository: RoomRepository,
     private val roomTypeRepository: RoomTypeRepository,
     private val hotelRepository: HotelRepository,
+    private val scheduleRepository: ScheduleRepository,
 ) {
     suspend fun getAllRooms(): List<RoomDto> = roomRepository.findAll().map { it.toDto() }
 
@@ -22,6 +24,12 @@ class RoomService(
         val isExists = roomRepository.existsByNumberAndHotel(dto.number, dto.hotel)
         if (isExists) throw RoomWithNumberAndHotelAlreadyExists(dto.number, dto.hotel)
         roomRepository.add(dto.toModel())
+    }
+
+    suspend fun deleteById(id: String) {
+        if (!roomRepository.existsById(id)) throw RoomNotFoundException(id)
+        if(scheduleRepository.findAllByRoomId(id).isNotEmpty()) throw RoomUsedInSchedulesException(id)
+        roomRepository.deleteById(id)
     }
 
     suspend fun isExists(id: String): Boolean = roomTypeRepository.existsById(id)
@@ -55,3 +63,5 @@ class RoomHasIncorrectType(roomId: String) : RuntimeException("Room with id: $ro
 class RoomHasIncorrectHotel(roomId: String) : RuntimeException("Room with id: $roomId has incorrect hotel.")
 class RoomWithNumberAndHotelAlreadyExists(number: String, hotelId: String) :
     RuntimeException("Room with number: $number already exists in hotel: $hotelId")
+
+class RoomUsedInSchedulesException(id: String): RuntimeException("Room with id: $id used in schedule.")

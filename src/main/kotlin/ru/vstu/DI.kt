@@ -23,7 +23,7 @@ fun DI.MainBuilder.registerAppBeans() {
     bindSingleton { ScheduleRepository(database) }
 
     // services
-    bindSingleton { RoomService(instance(), instance(), instance()) }
+    bindSingleton { RoomService(instance(), instance(), instance(), instance()) }
     bindSingleton { HotelService(instance()) }
     bindSingleton { RoomTypeService(instance()) }
     bindSingleton { UserService(instance()) }
