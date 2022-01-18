@@ -26,6 +26,7 @@ class ScheduleRoutesInstaller : RoutesInstaller, StatusPagesConfigurationsInstal
             getAvailableRooms()
             bookRoom()
             getAllSchedule()
+            getAllScheduleByHotelId()
         }
     }
 
@@ -51,6 +52,11 @@ class ScheduleLocation {
         val startDate: Long,
         val endDate: Long,
     )
+
+    @Location("/history/{hotelId}")
+    data class History(
+        val hotelId: String
+    )
 }
 
 private fun Route.bookRoom() = post<ScheduleLocation.Book> {
@@ -74,6 +80,13 @@ private fun Route.getAllSchedule() = get<ScheduleLocation> {
     val scheduleService: ScheduleService by closestDI().instance()
 
     val schedules = scheduleService.getAllSchedule()
+    call.respond(schedules)
+}
+
+private fun Route.getAllScheduleByHotelId() = get<ScheduleLocation.History> { location ->
+    val scheduleService: ScheduleService by closestDI().instance()
+
+    val schedules = scheduleService.getSchedulesByHotelId(location.hotelId)
     call.respond(schedules)
 }
 

@@ -27,7 +27,7 @@ fun DI.MainBuilder.registerAppBeans() {
     bindSingleton { HotelService(instance()) }
     bindSingleton { RoomTypeService(instance()) }
     bindSingleton { UserService(instance()) }
-    bindSingleton { ScheduleService(instance(), instance()) }
+    bindSingleton { ScheduleService(instance(), instance(), instance(), instance(), instance()) }
 
     // routes
     bindSingleton { HealthRoutesInstaller() }

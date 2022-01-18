@@ -24,6 +24,8 @@ class RoomService(
         roomRepository.add(dto.toModel())
     }
 
+    suspend fun isExists(id: String): Boolean = roomTypeRepository.existsById(id)
+
     suspend fun getRoomsByHotelIdAndTypeId(hotelId: String?, typeId: String?): List<RoomDto> {
         if (hotelId != null && !hotelRepository.existsById(hotelId)) throw HotelNotFoundException(hotelId)
         if (typeId != null && !roomTypeRepository.existsById(typeId)) throw RoomTypeNotFoundException(typeId)
